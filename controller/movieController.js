@@ -2,53 +2,51 @@ const { db } = require("./../connection");
 
 module.exports = {
   getMovie: (req, res) => {
-    var sql = `select * from product`;
+    var sql = `select * from movies`;
     db.query(sql, (err, result) => {
       if (err) res.status(500).send({ status: "error" });
       res.status(200).send(result);
     });
   },
   addMovie: (req, res) => {
-    // console.log(req.body);
-    var { storeName, productName, productPrice } = req.body;
-    var sql = `INSERT INTO store SET ?`;
+    var { nama, tahun, description } = req.body;
+    var sql = `INSERT INTO movies SET ?`;
     var data = {
-      storeName
+      nama,
+      tahun,
+      description
     };
     db.query(sql, data, (err, result) => {
-      //   console.log(err);
       if (err) res.status(500).send({ message: "Insert error" });
-      //   res.status(200).send({ message: "Insert Berhasil", result });
-      console.log(result);
-      sql = `INSERT INTO product SET ?`;
-      data = {
-        storeId: result.insertId,
-        productName,
-        productPrice
-      };
-      db.query(sql, data, (err, result2) => {
-        console.log(err);
-        if (err)
-          res.status(500).send({ message: "Insert ke Table product Error" });
-        res.status(200).send({ message: "Insert ke product Berhasil" });
-      });
+      res.status(200).send({ message: "Insert Berhasil", result });
     });
   },
   updateMovie: (req, res) => {
-    const userId = req.params.id;
-    var { storeName } = req.body;
+    console.log(req.body);
+    const id = req.params.id;
+    var { nama, tahun, description } = req.body;
     var data = {
-      storeName
+      nama,
+      tahun,
+      description
     };
-    var sql = `UPDATE store SET ? WHERE id= ${userId}`;
+    var sql = `UPDATE movies SET ? WHERE id= ${id}`;
     db.query(sql, data, (err, result) => {
       if (err) res.status(500).send(err);
       res.status(200).send(result);
     });
   },
   deleteMovie: (req, res) => {
-    const userId = req.params.id;
-    var sql = `DELETE FROM store WHERE id=${userId}`;
+    // Pake Constraint
+    // ALTER TABLE `movieindoxxi`.`movcat`
+    // ADD CONSTRAINT `fk_movcat_idmovie`
+    // FOREIGN KEY (`idmovie`)
+    // REFERENCES `movieindoxxi`.`movies` (`id`)
+    // ON DELETE CASCADE
+    // ON UPDATE CASCADE;
+
+    const id = req.params.id;
+    var sql = `DELETE FROM movies WHERE id=${id}`;
     db.query(sql, (err, result) => {
       if (err) res.status(500).send(err);
       res.status(200).send(result);
